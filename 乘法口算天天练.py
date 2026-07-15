@@ -113,6 +113,9 @@ class GameApp(ctk.CTk):
         self.bind_all("<space>", self.toggle_pause)
         self.bind_all("<Control-a>", self.toggle_auto_play)
         self.bind("<Unmap>", self._on_window_unmap)
+        self.bind_all("<Control-q>", lambda e: self._on_closing())
+        self.bind_all("<Control-Q>", lambda e: self._on_closing())
+        self.protocol("WM_DELETE_WINDOW", self._on_closing)
 
         self._table_row = 0
 
@@ -176,8 +179,18 @@ class GameApp(ctk.CTk):
             command=self._open_records,
             font=("Arial", 16),
         )
-        self.record_btn.pack(side="right", padx=(0, 6), pady=8)
+        self.record_btn.pack(side="right", padx=(0, 4), pady=8)
         _bind_tooltip(self.record_btn, "历史记录：查看最高 5 条成绩排行")
+
+        # 关闭按钮
+        self.close_btn = ctk.CTkButton(
+            self.title_bar, text="✕", width=36, height=28,
+            command=self._on_closing,
+            font=("Arial", 16),
+            fg_color="#CC3333", hover_color="#AA2222",
+        )
+        self.close_btn.pack(side="right", padx=(0, 8), pady=8)
+        _bind_tooltip(self.close_btn, "关闭程序")
 
         # ─────── 倒计时区域 ───────
         self.timer_frame = ctk.CTkFrame(self, height=135, corner_radius=14)
@@ -1109,6 +1122,17 @@ class GameApp(ctk.CTk):
                 w.configure(fg_color=accent)
             except:
                 pass
+
+    def _on_closing(self):
+        """关闭窗口时清理资源"""
+        # 取消所有定时器
+        for tid in [self.timer_id, self.lose_timer_id, self.auto_play_id]:
+            if tid:
+                try:
+                    self.after_cancel(tid)
+                except:
+                    pass
+        self.destroy()
 
 
 if __name__ == "__main__":
