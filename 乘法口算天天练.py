@@ -1114,7 +1114,19 @@ class GameApp(ctk.CTk):
 
     def change_theme(self, choice):
         cfg = THEME_COLORS[choice]
-        ctk.set_appearance_mode(cfg["mode"])
+        # 先关设置窗口，避免 grab 与主题重绘冲突导致卡死
+        if self._settings_win and self._settings_win.winfo_exists():
+            self._settings_win.destroy()
+            self._settings_win = None
+        # 延迟一帧执行主题切换，防止 tkinter 事件循环冲突
+        self.after(100, lambda: self._apply_theme(cfg))
+
+    def _apply_theme(self, cfg):
+        """实际执行主题切换"""
+        try:
+            ctk.set_appearance_mode(cfg["mode"])
+        except:
+            pass
         accent = cfg["accent"]
         for w in [self.submit_btn, self.next_btn, self.lose_revive_btn,
                   self.lose_watch_btn]:

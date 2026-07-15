@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 *.pyo
 build/
-dist/*.exe
+dist/
 *.spec
 乘法口算天天练_data.json
+乘法口诀表_data.json
+tesseract_portable/
