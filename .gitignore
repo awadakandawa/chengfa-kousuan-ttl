@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/*.exe
+*.spec
+乘法口算天天练_data.json
